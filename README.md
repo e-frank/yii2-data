@@ -9,7 +9,7 @@ Hierarchical Hydrator for ActiveRecord with support for relations.
 Usage
 -----
 
-```
+```php
 use efrank\data\Hydrator;
 
 // base model
@@ -43,7 +43,7 @@ in the configuration array you tell the hydrator which relational properties to 
 Configuration Examples
 ----------------------
 
-```
+```php
 // data from post
 $data = [
 	'Order' => [
@@ -58,7 +58,7 @@ $data = [
 ]
 ```
 
-```
+```php
 $config = [
 	'relations' => [
 		'orderItems' => [
@@ -70,11 +70,11 @@ $config = [
 
 ```
 
-```
+```php
 $order = new Order();
 $hydrator = new Hydrator($config);
 $hydrator->hydrate($order, $data);
 ```
 
-1. ```incremental => false``` (default) unlinks all orderItems except the ones passed in ```$data```.
-2. additionally to unlink, 'delete => true' also deletes these models. it has no effect on ```incremental => true```
+1. ```php incremental => false``` (default) unlinks all orderItems except the ones passed in ```php $data```.
+2. additionally to unlink, ```php delete => true``` also deletes these models. it has no effect on ```php incremental => true```
