@@ -76,5 +76,5 @@ $hydrator = new Hydrator($config);
 $hydrator->hydrate($order, $data);
 ```
 
-1. ```php incremental => false``` (default) unlinks all orderItems except the ones passed in ```php $data```.
-2. additionally to unlink, ```php delete => true``` also deletes these models. it has no effect on ```php incremental => true```
+1. ```incremental => false``` (default) unlinks all orderItems except the ones passed in ```$data```.
+2. additionally to unlink, ```delete => true``` also deletes these models. it has no effect on ```incremental => true```
