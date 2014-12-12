@@ -59,8 +59,4 @@ class ActiveDocument extends yii\base\Model
         return $model;
     }
 
-
-    public function init() {
-    }
-
 }
