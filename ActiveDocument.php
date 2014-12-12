@@ -43,7 +43,7 @@ class ActiveDocument extends yii\base\Model
 
 
     public static function attach(&$model, $options) {
-        $model->attachBehavior(ACTIVE_DOCUMENT, new \common\models\behaviors\ActiveDocumentBehavior($options));
+        $model->attachBehavior(self::ACTIVE_DOCUMENT, new \common\models\behaviors\ActiveDocumentBehavior($options));
     }
 
 
