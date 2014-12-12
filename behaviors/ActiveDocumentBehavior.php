@@ -251,7 +251,7 @@ class ActiveDocumentBehavior extends Behavior
 		$keys      = array_keys($relations);
 
 		$validators = $model->getValidators();
-		$validators->append(\yii\validators\Validator::createValidator(\common\models\validators\RelationValidator::className(), $model, (array) $keys, [
+		$validators->append(\yii\validators\Validator::createValidator(\x1\data\validators\RelationValidator::className(), $model, (array) $keys, [
 			'config'              => $config,
 			'activeDocumentClass' => get_class($this),
 			'on'                  => ArrayHelper::getValue($config, self::SCENARIO, null),
@@ -607,10 +607,10 @@ class ActiveDocumentBehavior extends Behavior
 			$rel = $model->getRelation($relation);
 			if ($rel->multiple) {
 				foreach ($model->$relation as $item) {
-					$errors[$relation][] = $this->getErrorDocument($item, $subconfig, false);
+					$errors[$relation][] = $this->getErrorDocumentHelper($item, $subconfig, false);
 				}
 			} else {
-				$errors[$relation] = $this->getErrorDocument($model->$relation, $subconfig, false);
+				$errors[$relation] = $this->getErrorDocumentHelper($model->$relation, $subconfig, false);
 			}
 		}
 
