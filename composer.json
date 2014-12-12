@@ -1,0 +1,21 @@
+{
+    "name":        "e-frank/yii2-data",
+    "description": "Helpers for persisting relational data from arrays",
+    "keywords":    ["yii", "ActiveRecord", "relations", "hierarchical"],
+    "type":        "yii2-extension",
+    "license":     "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Elmar Frank",
+            "email": "elmar.frank@efrank.at",
+            "homepage": "http://efrank.at"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+    },
+    "autoload": {
+        "psr-0": { "x1\\data\\": "" }
+    },
+    "target-dir": "x1/data"
+}
