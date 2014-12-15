@@ -59,9 +59,9 @@ class RelationValidator extends \yii\validators\Validator {
 			}
 		}
 
-		// if (!ArrayHelper::getValue($config, self::IGNORE_ERROR, false) && !$valid) {
-		// 	$model->addError($attribute, self::ERROR_MSG);
-		// }
+		if (!ArrayHelper::getValue($config, self::IGNORE_ERROR, false) && !$valid) {
+			$model->addError($attribute, self::ERROR_MSG);
+		}
 
 		return $valid;
 	}
