@@ -41,7 +41,7 @@ class ActiveDocument extends yii\base\Model
     public $useTransaction     = true;
     public $defaultIncremental = false;
     public $defaultIgnoreError = false;
-    public $defaultDelete      = true;
+    public $defaultDelete      = false;
     public $defaultScenario    = null;
     public $defaultSkipUpdate  = false;
 
