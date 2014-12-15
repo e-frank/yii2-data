@@ -81,6 +81,10 @@ class ActiveDocument extends yii\base\Model
     public function init() {
         if (is_string($this->model))
             $this->model = new $this->model();
+
+        if (empty($this->model))
+            throw new \yii\base\InvalidConfigException("model missing");
+            
         self::attach($this->model, $this->getConfig());
     }
 
