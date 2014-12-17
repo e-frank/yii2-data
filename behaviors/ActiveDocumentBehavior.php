@@ -673,6 +673,7 @@ class ActiveDocumentBehavior extends Behavior
 			$relations = [];
 
 		foreach ($relations as $relation => &$subconfig) {
+
 			$rel      = $model->getRelation($relation);
 			$sortable = ArrayHelper::getValue($subconfig, SELF::SORTABLE, null);
 
