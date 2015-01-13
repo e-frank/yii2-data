@@ -45,7 +45,6 @@ class ActiveDocumentBehavior extends Behavior
 	const FORMNAME            = 'formName';
 	const DELETE              = 'delete';
 	const REMOVE              = '_remove';
-	const UNLINK              = '_unlink';		// ??? unused
 	const LINK                = '_link';
 	const INCREMENTAL         = 'incremental';
 	const IGNORE_ERROR        = 'ignoreError';
@@ -404,10 +403,10 @@ class ActiveDocumentBehavior extends Behavior
 		$safe = array_intersect_key($data, array_flip($model->safeAttributes()));
 
 		if ($recursive) {
-			$model->load($safe, false);
+			$model->load($safe, '');
 			$this->setRelations($model, $data, $config);
 		} else {
-			$model->load($safe, false);
+			$model->load($safe, '');
 		}
 
 		return $model;

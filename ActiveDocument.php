@@ -54,18 +54,6 @@ class ActiveDocument extends yii\base\Model
     }
 
 
-    public static function find222($model, $options, $key) {
-        if (is_string($model))
-            $model = new $model();
-
-        self::attach($model, $options);
-        $model = $model->findWithRelations($key);
-        if ($model) {
-            self::attach($model, $options);
-        }
-        return $model;
-    }
-
     private function getConfig() {
         return [
             'useTransaction'     => $this->useTransaction,
