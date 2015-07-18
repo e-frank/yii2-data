@@ -56,7 +56,7 @@ class ActiveDocumentBehavior extends Behavior
 	const DEFAULT_SKIP_UPDATE = 'defaultSkipUpdate';
 
 
-	public $config             = [];
+	public $relations          = [];
 	public $useTransaction     = true;
 	public $defaultIncremental = false;
 	public $defaultIgnoreError = false;
@@ -108,7 +108,8 @@ class ActiveDocumentBehavior extends Behavior
 	 * @internal
 	 */
 	public function afterActiveDocumentSave($event) {
-		$result = $this->saveRelations($this->owner, $this->config);
+		$config = [self::RELATIONS => &$this->relations];
+		$result = $this->saveRelations($this->owner, $config);
 		
 		if (!empty($this->_transaction)) {
 			if ($result) {
@@ -227,18 +228,28 @@ class ActiveDocumentBehavior extends Behavior
 	}
 
 
+	private function getConfig() {
+		return [
+		'relations'          => &$this->relations,
+		'useTransaction'     => $this->useTransaction,
+		'defaultIncremental' => $this->defaultIncremental,
+		'defaultIgnoreError' => $this->defaultIgnoreError,
+		'defaultDelete'      => $this->defaultDelete,
+		'defaultScenario'    => $this->defaultScenario,
+		'defaultSkipUpdate'  => $this->defaultSkipUpdate,
+		];		
+	}
+
 	/**
 	 * Prepare config when the model is attached.
 	 * @param  Model   $owner
 	 * @internal
 	 */
 	public function attach($owner) {
-		if (!array_key_exists(self::RELATIONS, $this->config))
-			$this->config[self::RELATIONS] = [];
-		$this->_relations = array_keys($this->config[self::RELATIONS]);
-		
+		$this->_relations = array_keys($this->relations);
 		parent::attach($owner);
-		$this->addRelationValidator($this->owner, $this->config);
+		$config = $this->getConfig();
+		$this->addRelationValidator($this->owner, $config);
 	}
 
 
@@ -268,7 +279,7 @@ class ActiveDocumentBehavior extends Behavior
 	 * @param array $config configuration array
 	 * @internal
 	 */
-	private function loadRelations($base, $config) {
+	private function loadRelations($base, &$config) {
 		$relations    = ArrayHelper::getValue($config, self::RELATIONS, []);
 		$complete     = [];
 
@@ -283,8 +294,29 @@ class ActiveDocumentBehavior extends Behavior
 		return $complete;
 	}
 
-	private function helpFindWithRelations($modelClass, $key, $config)  {
 
+	// get table alias (see ActiveQuery->getQueryTableName)
+	private function getQueryAlias($owner, $query) {
+		if (empty($query->from)) {
+            $tableName = $owner::tableName();
+        } else {
+            $tableName = '';
+            foreach ($query->from as $alias => $tableName) {
+                if (is_string($alias)) {
+                    return $alias;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (preg_match('/^(.*?)\s+({{\w+}}|\w+)$/', $tableName, $matches)) {
+            $alias = $matches[2];
+        } else {
+            $alias = $tableName;
+        }
+
+        return $alias;
 	}
 
 	/**
@@ -296,24 +328,39 @@ class ActiveDocumentBehavior extends Behavior
 
 		$owner = $this->owner;
 		$query = $owner::find();
+		$alias = $this->getQueryAlias($owner, $query);
 
 		if (!ArrayHelper::isAssociative($key)) {
             // query by primary key
 			$primaryKey = $owner::primaryKey();
 			if (isset($primaryKey[0])) {
-				$key = [$primaryKey[0] => $key];
+				$key = [$alias . '.' . $primaryKey[0] => $key];
 			} else {
 				throw new InvalidConfigException(get_called_class() . ' must have a primary key.');
 			}
+		} else {
+			foreach ($key as $k => $value) {
+				$key[$alias . '.' .$k] = $value;
+				unset($key[$k]);
+			}
 		}
 
+
+
 		$find      = $query->andWhere($key);
-		$relations = $this->loadRelations(null, $this->config);
+		$config    = [self::RELATIONS => &$this->relations];
+		$relations = $this->loadRelations(null, $config);
+
 		foreach ($relations as $key => $value) {
 			$find->with($value);
 		}
 
-		return $find->one();
+		$model = $find->one();
+		if (!$model == null) {
+			$this->attach($model, $this->getConfig());
+		}
+
+		return $model;
 	}
 
 
@@ -436,6 +483,7 @@ class ActiveDocumentBehavior extends Behavior
 	private function setRelations(&$model, &$data, &$config) {
 		if (isset($config[self::RELATIONS]) && !empty($config[self::RELATIONS])) {
 			$relations = & $config[self::RELATIONS];
+
 			foreach ($relations as $key => $value) {
 				if (array_key_exists($key, $data))
 					$this->setRelation($model, $key, $data[$key], $config);
@@ -579,13 +627,34 @@ class ActiveDocumentBehavior extends Behavior
 		if (in_array($name, $this->_relations))
 		{
 			// start setting relation data
-			$this->setRelation($this->owner, $name, $value, $this->config);
+			$config = [self::RELATIONS => &$this->relations];
+
+			$this->setRelation($this->owner, $name, $value, $config);
 			return $this->owner;
 		}
 
 		return parent::__set($name, $value);
 	}
 
+
+	private function relationConfigHelper(&$relations) {
+		if (!ArrayHelper::isAssociative($relations)) {
+			$r2 = [];
+			foreach ($relations as $key) {
+				$r2[$key] = [];
+			}
+			$relations = $r2;
+		} else {
+			foreach ($relations as $key => &$value) {
+				if (isset($relations[$key][self::RELATIONS]))
+					$this->relationConfigHelper($relations[$key][self::RELATIONS]);
+			}
+		}
+	}
+
+	public function init() {
+		$this->relationConfigHelper($this->relations);
+	}
 
 	/**
 	 * Recursively gets all errors for a model, including relations.
@@ -598,12 +667,13 @@ class ActiveDocumentBehavior extends Behavior
 	 */
 	public function getErrorDocument(&$model = null) {
 		$model = $this->owner;
-		$config = $this->config;
 
 		if ($model == null) {
 			throw new Exception('"model" is not set');
 			return null;
 		}
+
+		$config = [self::RELATIONS => &$this->relations];
 		return $this->getErrorDocumentHelper($model, $config);
 	}
 
@@ -627,7 +697,7 @@ class ActiveDocumentBehavior extends Behavior
 					$errors[$relation][$sortable == null ? $index++ : $item->$sortable] = $this->getErrorDocumentHelper($item, $subconfig, false);
 				}
 
-				if ($sortable !== null)
+				if ($sortable !== null && $errors[$relation] !== null)
 					ksort($errors[$relation]);
 
 			} else {
@@ -653,13 +723,13 @@ class ActiveDocumentBehavior extends Behavior
 	 */
 	public function getDocument() {
 		$model  = $this->owner;
-		$config = $this->config;
 
 		if ($model == null) {
 			throw new Exception('there is no model');
 			return null;
 		}
 
+		$config = [self::RELATIONS => &$this->relations];
 		return $this->getDocumentHelper($model, $config);
 	}
 

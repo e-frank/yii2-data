@@ -37,7 +37,7 @@ class ActiveDocument extends yii\base\Model
 {
     const ACTIVE_DOCUMENT = 'ActiveDocument';
 
-    public $config             = [];
+    public $relations          = [];
     public $useTransaction     = true;
     public $defaultIncremental = false;
     public $defaultIgnoreError = false;
@@ -62,17 +62,21 @@ class ActiveDocument extends yii\base\Model
             'defaultDelete'      => $this->defaultDelete,
             'defaultScenario'    => $this->defaultScenario,
             'defaultSkipUpdate'  => $this->defaultSkipUpdate,
-            'config'             => $this->config,
+            'relations'          => $this->relations,
         ];
+    }
+
+
+    private function checkModel() {
+        if (empty($this->model))
+            throw new \yii\base\InvalidConfigException("model missing");
     }
 
     public function init() {
         if (is_string($this->model))
             $this->model = new $this->model();
 
-        if (empty($this->model))
-            throw new \yii\base\InvalidConfigException("model missing");
-            
+        $this->checkModel();
         self::attach($this->model, $this->getConfig());
     }
 
@@ -84,6 +88,7 @@ class ActiveDocument extends yii\base\Model
     }
 
     public function load($data, $formName = null) {
+        $this->checkModel();
         return $this->model->load($data, $formName);
     }
 
