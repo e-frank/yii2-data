@@ -17,10 +17,9 @@ $document = new \x1\data\ActiveDocument([
     // 'useTransaction'     => true,
     // 'defaultIncremental' => false,
     // 'defaultIgnoreError' => false,
-    // 'defaultDelete'      => false,
+    // 'defaultDelete'      => true,
     // 'defaultScenario'    => null,
     // 'defaultSkipUpdate'  => false,
-    // 'defaultDelete'      => false,
     // 'defaultIgnoreError' => false,
 
     'relations' => [
@@ -43,6 +42,7 @@ $model->load($data);		// relations are set!
 
 1. ```incremental => false``` (default) unlinks all orderItems except the ones passed in ```$data```.
 2. additionally to unlink, ```delete => true``` also deletes these models. it has no effect on ```incremental => true```
+3. if relation configuration values are not explicitly set, the default values at root level are used
 
 
 pass all needed relations to the configurations array. you can customize the processing of related data as shown below, like link/unlink and delete/skip behavior. 
@@ -82,3 +82,12 @@ $data = [
 ]
 ```
 
+Behind the scene
+----------------------
+1. The ```php ActiveDocument``` helper class just attaches the ```php ActiveDocumentBehavior``` to an ActiveRecord
+2. For each relation, the ```php RelationValidator``` is attached. This allows capturing the relation's setter (when loading)
+3. Now ```php $model->load($data)``` also cares about relations.
+4. On before save, a transaction is opened
+5. If everything is valid (ignoring those models, who skipError), we can finally save
+6. ```Commit``` or ```Rollback``` the transaction
+7. use ```php $model->getErrorDocument()``` and ```php $model->getDocument()```
