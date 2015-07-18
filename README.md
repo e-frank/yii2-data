@@ -13,20 +13,30 @@ Usage
 ```php
 $document = new \x1\data\ActiveDocument([
     'model'     => Order::className(),
-    'defaultDelete'      => false,
-    'defaultIgnoreError' => false,
+    
+    // 'useTransaction'     => true,
+    // 'defaultIncremental' => false,
+    // 'defaultIgnoreError' => false,
+    // 'defaultDelete'      => false,
+    // 'defaultScenario'    => null,
+    // 'defaultSkipUpdate'  => false,
+    // 'defaultDelete'      => false,
+    // 'defaultIgnoreError' => false,
 
     'relations' => [
         'orderItems' => [
-            // 'incremental' => false,	// default = false
-            // 'delete' => true,	// default = false
-            // 'scenario' => null,	// default = null
-            'relations' => ['supplier'],	// other relations of 'orderItem'
+            // 'incremental' => false,   // sets relations as passed by data and unlinks omitted rows
+            // 'skipUpdate'  => false,   // models are save, otherwise they are skipped
+            // 'delete'      => true,    // deletes dropped models, otherwise they are only unlinked
+            // 'scenario'    => null,	 // the scenario to use for validation
+            // 'useTransaction' => true, // wraps all operations in a transaction
+            // 'sortable' => null,       // (string) name of the order column (=int field)
+            'relations' => ['supplier'], // other relations of 'orderItem', maybe nested
         ]
     ],
 ]);
 
-$model = $document->findOne(1);
+$model = $document->findOne(1); // find the model and quietly attach ActiveDocumentBehavior
 $model->load($data);		// relations are set!
 ```
 
