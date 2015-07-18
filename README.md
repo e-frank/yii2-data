@@ -9,26 +9,39 @@ Hierarchical Hydrator for ActiveRecord with support for relations.
 Usage
 -----
 
+
 ```php
-use efrank\data\Hydrator;
+$document = new \x1\data\ActiveDocument([
+    'model'     => Order::className(),
+    'defaultDelete'      => false,
+    'defaultIgnoreError' => false,
 
-// base model
-$model    = new MyModel();
+    'relations' => [
+        'orderItems' => [
+            // 'incremental' => false,	// default = false
+            // 'delete' => true,	// default = false
+            // 'scenario' => null,	// default = null
+            'relations' => ['supplier'],	// other relations of 'orderItem'
+        ]
+    ],
+]);
 
-// create the hydrator. 
-$hydrator = new Hydrator(['relations' => ['friends' => ['incremental' => true, 'delete' => false], 'author' => []]]);
-
-// save data with all related models
-$hydrator->hydrate($model, $dataFromPost);
+$model = $document->findOne(1);
+$model->load($data);		// relations are set!
 ```
 
-in the configuration array you tell the hydrator which relational properties to use and what to do with existing related items - link/unlink and delete/skip.
+
+1. ```incremental => false``` (default) unlinks all orderItems except the ones passed in ```$data```.
+2. additionally to unlink, ```delete => true``` also deletes these models. it has no effect on ```incremental => true```
+
+
+pass all needed relations to the configurations array. you can customize the processing of related data as shown below, like link/unlink and delete/skip behavior. 
 
 
 | option        | value         | description  |
 | ------------- |:-------------:| -----        |
-| ```incremental```   | ```true```          | only uses existing, related models, which could be identified by the data array  |
-|               | ```false```         | uses all models in the given relation |
+| ```incremental```   | ```true```          | updates and creates, but does not remove omitted models  |
+|               | ```false```         | sets the relation's models only to the ones passed by load(), all others are removed |
 | ```delete```        | ```true```          | models missing in the relation are unlinked and **deleted** |
 | ```delete```        | ```false```         | models missing in the relation are unlinked |
 
@@ -39,8 +52,9 @@ in the configuration array you tell the hydrator which relational properties to 
 
 
 
+
 ---
-Configuration Examples
+Data Example
 ----------------------
 
 ```php
@@ -58,23 +72,3 @@ $data = [
 ]
 ```
 
-```php
-$config = [
-	'relations' => [
-		'orderItems' => [
-			'incremental' 	=> false,
-			'delete' 		=> true,
-		]
-	]
-];
-
-```
-
-```php
-$order = new Order();
-$hydrator = new Hydrator($config);
-$hydrator->hydrate($order, $data);
-```
-
-1. ```incremental => false``` (default) unlinks all orderItems except the ones passed in ```$data```.
-2. additionally to unlink, ```delete => true``` also deletes these models. it has no effect on ```incremental => true```
