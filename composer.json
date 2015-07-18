@@ -14,7 +14,6 @@
         "yiisoft/yii2": "*"
     },
     "autoload": {
-        "psr-0": { "x1\\data\\": "" }
-    },
-    "target-dir": "x1/data"
+        "psr-4": { "x1\\data\\": "" }
+    }
 }
