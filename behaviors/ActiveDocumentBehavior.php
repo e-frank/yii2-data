@@ -60,7 +60,7 @@ class ActiveDocumentBehavior extends Behavior
 	public $useTransaction     = true;
 	public $defaultIncremental = false;
 	public $defaultIgnoreError = false;
-	public $defaultDelete      = false;
+	public $defaultDelete      = true;
 	public $defaultScenario    = null;
 	public $defaultSkipUpdate  = false;
 	private $_delete           = [];
