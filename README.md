@@ -1,7 +1,7 @@
 yii2-data
 =========
 
-Hierarchical Hydrator for ActiveRecord with support for relations.
+Hierarchical hydrator for ActiveRecord with support for relations and sorting.
 
 
 
@@ -84,10 +84,10 @@ $data = [
 
 Behind the scene
 ----------------------
-1. The ```php ActiveDocument``` helper class just attaches the ```php ActiveDocumentBehavior``` to an ActiveRecord
-2. For each relation, the ```php RelationValidator``` is attached. This allows capturing the relation's setter (when loading)
-3. Now ```php $model->load($data)``` also cares about relations.
+1. The ```ActiveDocument``` helper class just attaches the ```ActiveDocumentBehavior``` to an ActiveRecord
+2. For each relation, the ```RelationValidator``` is attached. This allows capturing the relation's setter (when loading)
+3. Now ```$model->load($data)``` also cares about relations.
 4. On before save, a transaction is opened
 5. If everything is valid (ignoring those models, who skipError), we can finally save
 6. ```Commit``` or ```Rollback``` the transaction
-7. use ```php $model->getErrorDocument()``` and ```php $model->getDocument()```
+7. use ```$model->getErrorDocument()``` and ```$model->getDocument()```
