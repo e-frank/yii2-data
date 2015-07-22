@@ -3,7 +3,6 @@ namespace x1\data;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\db\ActiveRecord;
 
 
 /**
@@ -35,7 +34,7 @@ use yii\db\ActiveRecord;
  */
 class ActiveDocument extends yii\base\Model
 {
-    const ACTIVE_DOCUMENT = 'ActiveDocument';
+    const ACTIVE_DOCUMENT      = 'ActiveDocument';
 
     public $relations          = [];
     public $useTransaction     = true;
