@@ -91,4 +91,8 @@ class ActiveDocument extends yii\base\Model
         return $this->model->load($data, $formName);
     }
 
+    public function getErrors($attribute = null) {
+        $this->checkModel();
+        return $this->model->getErrorDocument();
+    }
 }
