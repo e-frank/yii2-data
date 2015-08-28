@@ -7,7 +7,7 @@
     "authors": [
         {
             "name"    : "Elmar Frank",
-            "homepage": "http://efrank.at"
+            "homepage": "http://yii.efrank.at/extension/data"
         }
     ],
     "require": {
@@ -15,5 +15,8 @@
     },
     "autoload": {
         "psr-4": { "x1\\data\\": "" }
+    },
+    "extra": {
+        "bootstrap": "x1\\data\\DataBootstrap"
     }
 }
