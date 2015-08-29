@@ -15,10 +15,15 @@ class DataBootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
 
-		\Yii::$container->set('yii\validators\DateValidator', [
-			'class'  => 'yii\validators\DateValidator',
-			'format' => 'yyyy-MM-dd HH:mm:ss',
+
+		\Yii::$container->set('yii\validators\Validator', [
+			'class'  => 'x1\data\validators\Validator',
 			]);
+
+		// \Yii::$container->set('yii\validators\DateValidator', [
+		// 	'class'  => 'yii\validators\DateValidator',
+		// 	'format' => 'yyyy-MM-dd HH:mm:ss',
+		// 	]);
 
     }
 }
