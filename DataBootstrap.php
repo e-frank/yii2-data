@@ -1,6 +1,7 @@
 <?php
 namespace x1\data;
 
+use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Application;
 
@@ -15,15 +16,15 @@ class DataBootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
 
+    	\yii\validators\Validator::$builtInValidators['datetime'] = [
+    		'class'  => 'yii\validators\DateValidator',
+    		'format' => 'yyyy-M-d H:m:s',
+    	];
 
-		\Yii::$container->set('yii\validators\Validator', [
-			'class'  => 'x1\data\validators\Validator',
-			]);
-
-		// \Yii::$container->set('yii\validators\DateValidator', [
-		// 	'class'  => 'yii\validators\DateValidator',
-		// 	'format' => 'yyyy-MM-dd HH:mm:ss',
-		// 	]);
+    	\yii\validators\Validator::$builtInValidators['date'] = [
+    		'class'  => 'yii\validators\DateValidator',
+    		'format' => 'yyyy-M-d',
+    	];
 
     }
 }
