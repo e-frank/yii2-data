@@ -37,7 +37,7 @@ class myModel extends \yii\db\ActiveRecord
 class OwnerBehavior extends \yii\behaviors\BlameableBehavior
 {
     public $createdByAttribute = 'user_id';
-    public $updaterAttribute   = 'updater_id';
+    public $updatedByAttribute = 'updater_id';
 
 
     public function getUserName() {
@@ -53,23 +53,7 @@ class OwnerBehavior extends \yii\behaviors\BlameableBehavior
     }
 
     public function getUpdater() {
-        return $this->owner->hasOne(Yii::$app->user->identityClass, ['id' => $this->updaterAttribute]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-
-        if (!Yii::$app instanceof \yii\console\Application) {
-            if (!empty($this->createdByAttribute))
-                $this->attributes[BaseActiveRecord::EVENT_BEFORE_INSERT] = $this->createdByAttribute;
-
-            if (!empty($this->updaterAttribute))
-                $this->attributes[BaseActiveRecord::EVENT_BEFORE_UPDATE] = $this->updaterAttribute;
-        }
+        return $this->owner->hasOne(Yii::$app->user->identityClass, ['id' => $this->updatedByAttribute]);
     }
 
 }
