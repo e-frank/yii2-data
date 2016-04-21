@@ -191,7 +191,9 @@ class ActiveDocumentBehavior extends Behavior
 				$model->link($relationName, $item);
 			} else {
 				if (!$skipUpdate) {
-					$model->link($relationName, $item);
+					// save linked item only, if something changed
+					if (count($item->getDirtyAttributes()) > 0)
+						$item->save();
 				}
 			}
 		}
@@ -216,7 +218,7 @@ class ActiveDocumentBehavior extends Behavior
 		$rel                     = $model->getRelation($relationName);
 
 		if ($rel->multiple) {
-			foreach ($model->$relationName as $key => $item) {
+			foreach ($model->$relationName as $item) {
 				$result = $result && $this->saveRelationModel($model, $relationName, $rel->via, $item, $config);
 			}
 		} else {
@@ -610,6 +612,7 @@ class ActiveDocumentBehavior extends Behavior
 				}
 			}
 		}
+
 		if ($models !== null)
 			$model->populateRelation($relationName, $models);
 	}
