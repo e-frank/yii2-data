@@ -1,4 +1,4 @@
-<?
+<?php
 namespace x1\data\behaviors;
 
 use yii;
