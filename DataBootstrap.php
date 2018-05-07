@@ -28,4 +28,3 @@ class DataBootstrap implements BootstrapInterface
 
     }
 }
-?>

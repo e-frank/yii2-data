@@ -1,4 +1,4 @@
-<?
+<?php
 namespace x1\data\behaviors;
 
 use yii;
@@ -408,7 +408,7 @@ class ActiveDocumentBehavior extends Behavior
 
 		if ($incrementalParent) {
 			$query     = $model->find();
-			$find      = $query->andWhere($key);
+			$find      = $query->andWhere($keys);
 			$relations = $this->loadRelations(null, $config);
 
 			foreach ($relations as $key => $value) {
@@ -762,9 +762,4 @@ class ActiveDocumentBehavior extends Behavior
 		return $result;
 	}
 
-
-
-
 }
-
-?>

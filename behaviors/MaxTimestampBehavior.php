@@ -23,5 +23,3 @@ class MaxTimestampBehavior extends Behavior
 	}
 
 }
-
-?>

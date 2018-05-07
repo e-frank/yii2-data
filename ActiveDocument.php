@@ -40,7 +40,7 @@ class ActiveDocument extends yii\base\Model
     public $useTransaction     = true;
     public $defaultIncremental = false;
     public $defaultIgnoreError = false;
-    public $defaultDelete      = false;
+    public $defaultDelete      = true;
     public $defaultScenario    = null;
     public $defaultSkipUpdate  = false;
 
@@ -68,7 +68,7 @@ class ActiveDocument extends yii\base\Model
 
     private function checkModel() {
         if (empty($this->model))
-            throw new \yii\base\InvalidConfigException("model missing");
+            throw new \yii\base\InvalidConfigException("Model missing");
     }
 
     public function init() {

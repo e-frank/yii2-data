@@ -1,4 +1,4 @@
-<?
+<?php
 namespace x1\data\validators;
 
 use yii\helpers\ArrayHelper;
@@ -74,5 +74,3 @@ class RelationValidator extends \yii\validators\Validator {
 	}
 
 }
-
-?>
